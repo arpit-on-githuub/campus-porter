@@ -55,7 +55,7 @@ const MyRequestsPage = () => {
                 : 'text-gray-500'
             }`}
           >
-            📝 Posted
+            📝 Posted by me
           </button>
           <button
             onClick={() => setActiveTab('assigned')}
@@ -65,7 +65,7 @@ const MyRequestsPage = () => {
                 : 'text-gray-500'
             }`}
           >
-            🚀 Delivering
+            🚀 Delivered by me 
           </button>
         </div>
 

@@ -1,3 +1,4 @@
+const sendEmail = require('../utils/sendEmail');
 const Request = require('../models/Request');
 const User = require('../models/User');
 
@@ -32,6 +33,26 @@ const createRequest = async (req, res) => {
       tipAmount,
       expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000)
     });
+
+    // Send email notification to all verified users
+// (In production, only send to users who opted in)
+const notifyUsers = await User.find({ 
+  isVerified: true,
+  _id: { $ne: req.user._id }
+}).select('email name').limit(50);
+
+// Don't await this — let it run in background
+notifyUsers.forEach(u => {
+  sendEmail(
+    u.email,
+    '🎓 New Campus Porter Request',
+    `<h2>New Request Posted!</h2>
+     <p><b>${req.user.name}</b> needs help from <b>${fromLocation}</b> to <b>${toLocation}</b></p>
+     <p>Item: ${itemDescription}</p>
+     <p>Tip: ₹${tipAmount / 100}</p>
+     <p>Open the app to accept this request!</p>`
+  ).catch(err => console.log('Email notification failed:', err));
+});
 
     res.status(201).json({
       message: 'Request created successfully',
@@ -77,7 +98,7 @@ const getRequests = async (req, res) => {
 
     const requests = await Request.find(filter)
       .sort(sort)
-      .populate('requester', 'name email rating totalDeliveries')
+      .populate('requester', 'name email rating totalDeliveries phone')
       .limit(50);
 
     res.json({
@@ -95,8 +116,8 @@ const getRequests = async (req, res) => {
 const getRequestById = async (req, res) => {
   try {
     const request = await Request.findById(req.params.id)
-      .populate('requester', 'name email rating totalDeliveries')
-      .populate('porter', 'name email rating totalDeliveries');
+      .populate('requester', 'name email rating totalDeliveries phone')
+      .populate('porter', 'name email rating totalDeliveries phone');
 
     if (!request) {
       return res.status(404).json({ message: 'Request not found' });
@@ -219,6 +240,16 @@ const updateStatus = async (req, res) => {
 
     request.status = status;
     await request.save();
+    // Notify via socket
+const io = req.app.get('io');
+if (io) {
+  io.to(request._id.toString()).emit('request_cancelled', {
+    requestId: request._id,
+    cancelledBy: req.user.name,
+    message: `${req.user.name} cancelled the request`
+  });
+}
+
 
     res.json({
       message: `Request status updated to ${status}`,

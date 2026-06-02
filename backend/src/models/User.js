@@ -36,7 +36,15 @@ const userSchema = new mongoose.Schema({
   totalDeliveries: {
     type: Number,
     default: 0
-  }
+  },
+  phone: {
+  type: String,
+  default: null
+},
+isPhoneShared: {
+  type: Boolean,
+  default: false
+}
 }, {
   timestamps: true
 });

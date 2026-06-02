@@ -1,10 +1,17 @@
+import { useState } from 'react';
+import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 
 const ProfilePage = () => {
   const { user, logout } = useAuth();
+const { isDark } = useTheme();
   const navigate = useNavigate();
+  const [phone, setPhone] = useState(user?.phone || '');
+const [phoneLoading, setPhoneLoading] = useState(false);
+const [phoneSuccess, setPhoneSuccess] = useState(''); 
 
   const handleLogout = () => {
     logout();
@@ -54,6 +61,52 @@ const ProfilePage = () => {
             </p>
           </div>
         </div>
+
+        {/* Phone number section */}
+<div className={`rounded-xl p-4 mb-4 ${isDark ? 'bg-slate-800' : 'bg-white'} shadow-sm`}>
+  <p className={`text-sm font-semibold mb-3 ${isDark ? 'text-white' : 'text-slate-800'}`}>
+    📞 Phone Number
+  </p>
+  <p className={`text-xs mb-3 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+    Add your number so porters/requesters can call you directly
+  </p>
+  <div className="flex gap-2">
+    <input
+      type="tel"
+      value={phone}
+      onChange={(e) => setPhone(e.target.value)}
+      placeholder="Enter 10-digit number"
+      maxLength={10}
+      className={`flex-1 rounded-xl px-3 py-2.5 text-sm border focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+        isDark
+          ? 'bg-slate-700 border-slate-600 text-white'
+          : 'bg-slate-50 border-slate-200'
+      }`}
+    />
+    <button
+      onClick={async () => {
+        setPhoneLoading(true);
+        try {
+          await axios.patch(
+            'http://localhost:3000/api/auth/update-phone',
+            { phone, isPhoneShared: true },
+            { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+          );
+          setPhoneSuccess('Saved!');
+          setTimeout(() => setPhoneSuccess(''), 2000);
+        } catch (err) {
+          console.error(err);
+        } finally {
+          setPhoneLoading(false);
+        }
+      }}
+      disabled={phoneLoading}
+      className="bg-blue-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium"
+    >
+      {phoneLoading ? '...' : phoneSuccess || 'Save'}
+    </button>
+  </div>
+</div>
 
         {/* Actions */}
         <div className="space-y-3">

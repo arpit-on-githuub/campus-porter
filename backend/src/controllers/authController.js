@@ -142,5 +142,113 @@ const login = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+// UPDATE PHONE
+const updatePhone = async (req, res) => {
+  try {
+    const { phone, isPhoneShared } = req.body;
 
-module.exports = { register, verifyOTP, login };
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { phone, isPhoneShared },
+      { new: true }
+    ).select('-password');
+
+    res.json({
+      message: 'Phone updated successfully',
+      user
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// FORGOT PASSWORD - SEND OTP
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email.endsWith('@iitj.ac.in')) {
+      return res.status(400).json({ 
+        message: 'Only @iitj.ac.in emails allowed' 
+      });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: 'No account found with this email' });
+    }
+
+    const otp = generateOTP();
+    const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
+
+    user.otp = otp;
+    user.otpExpiresAt = otpExpiresAt;
+    await user.save();
+
+    await sendEmail(
+      email,
+      'Reset your Campus Porter password',
+      `<h2>Password Reset</h2>
+       <p>Your OTP is: <b style="font-size:24px">${otp}</b></p>
+       <p>This OTP expires in 10 minutes.</p>
+       <p>If you didn't request this, ignore this email.</p>`
+    );
+
+    res.json({ 
+      message: 'OTP sent to your email',
+      email 
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// RESET PASSWORD
+const resetPassword = async (req, res) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (new Date() > user.otpExpiresAt) {
+      return res.status(400).json({ message: 'OTP has expired' });
+    }
+
+    if (user.otp !== otp) {
+      return res.status(400).json({ message: 'Invalid OTP' });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ 
+        message: 'Password must be at least 6 characters' 
+      });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword, salt);
+    user.otp = null;
+    user.otpExpiresAt = null;
+    await user.save();
+
+    res.json({ message: 'Password reset successfully. You can now login.' });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+};
+module.exports = { 
+  register, 
+  verifyOTP, 
+  login, 
+  updatePhone,
+  forgotPassword,
+  resetPassword
+};
