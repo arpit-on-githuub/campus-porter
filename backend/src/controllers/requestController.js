@@ -59,6 +59,8 @@ notifyUsers.forEach(u => {
       request
     });
 
+  
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });
@@ -351,7 +353,6 @@ const getMyRequests = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 // GET ASSIGNED REQUESTS (as porter)
 const getAssignedRequests = async (req, res) => {
   try {

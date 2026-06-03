@@ -17,6 +17,11 @@ import RequestDetailPage from './pages/RequestDetailPage'
 import MyRequestsPage from './pages/MyRequestsPage'
 import ProfilePage from './pages/ProfilePage'
 
+// Request notification permission
+if ('Notification' in window) {
+  Notification.requestPermission();
+}
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ThemeProvider>

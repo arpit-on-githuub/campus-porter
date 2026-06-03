@@ -41,6 +41,10 @@ const userSchema = new mongoose.Schema({
   type: String,
   default: null
 },
+emailNotifications: {
+  type: Boolean,
+  default: true
+},
 isPhoneShared: {
   type: Boolean,
   default: false

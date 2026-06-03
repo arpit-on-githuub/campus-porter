@@ -107,6 +107,37 @@ const [phoneSuccess, setPhoneSuccess] = useState('');
     </button>
   </div>
 </div>
+{/* Email notifications toggle */}
+<div className={`rounded-xl p-4 mb-4 flex justify-between items-center ${isDark ? 'bg-slate-800' : 'bg-white'} shadow-sm`}>
+  <div>
+    <p className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-slate-800'}`}>
+      📧 Email Notifications
+    </p>
+    <p className={`text-xs mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+      Get notified about new requests
+    </p>
+  </div>
+  <button
+    onClick={async () => {
+      try {
+        await axios.patch(
+          'http://localhost:3000/api/auth/update-phone',
+          { emailNotifications: !user.emailNotifications },
+          { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+        );
+      } catch (err) {
+        console.error(err);
+      }
+    }}
+    className={`w-12 h-6 rounded-full transition-colors ${
+      user?.emailNotifications !== false ? 'bg-blue-600' : 'bg-slate-300'
+    }`}
+  >
+    <div className={`w-5 h-5 bg-white rounded-full shadow transition-transform ${
+      user?.emailNotifications !== false ? 'translate-x-6' : 'translate-x-1'
+    }`} />
+  </button>
+</div>
 
         {/* Actions */}
         <div className="space-y-3">

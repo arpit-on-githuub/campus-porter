@@ -11,6 +11,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import Navbar from '../components/Navbar';
 import ChatBox from '../components/ChatBox';
+import { sendNotification } from '../utils/notify';
 
 const STATUS_COLORS = {
   open: 'bg-blue-100 text-blue-600',
@@ -287,6 +288,7 @@ const RequestDetailPage = () => {
               {actionLoading ? 'Updating...' : '📦 Mark as Picked Up'}
             </button>
           )}
+          sendNotification('Campus Porter', `Your request status updated to ${newStatus}`);
 
           {isPorter && request.status === 'picked_up' && (
             <button
@@ -297,6 +299,7 @@ const RequestDetailPage = () => {
               {actionLoading ? 'Updating...' : '🚀 Mark as Delivered'}
             </button>
           )}
+          sendNotification('Campus Porter', `Your request status updated to ${newStatus}`);
 
           {isRequester && request.status === 'delivered' && (
             <div className="space-y-3">
@@ -307,6 +310,7 @@ const RequestDetailPage = () => {
               >
                 {actionLoading ? 'Confirming...' : '✅ Confirm Delivery'}
               </button>
+              sendNotification('Campus Porter', `Your request status updated to ${newStatus}`);
               <button
                 onClick={handlePayment}
                 disabled={actionLoading}
@@ -316,7 +320,7 @@ const RequestDetailPage = () => {
               </button>
             </div>
           )}
-
+sendNotification('Campus Porter', `Your request status updated to ${newStatus}`);
           {(isRequester || isPorter) &&
             ['accepted', 'picked_up', 'delivered', 'completed'].includes(request.status) && (
               <div className="space-y-3">
