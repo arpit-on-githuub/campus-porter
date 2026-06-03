@@ -3,7 +3,7 @@ import { io } from 'socket.io-client';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 
-const socket = io('http://localhost:3000');
+const socket = io(import.meta.env.VITE_API_URL);
 
 const ChatBox = ({ requestId, otherUser, isOpen, onClose }) => {
   const [messages, setMessages] = useState([]);
