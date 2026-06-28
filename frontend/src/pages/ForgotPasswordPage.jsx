@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:3000/api/auth';
+const BASE_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/auth`;
 
 const ForgotPasswordPage = () => {
   const [step, setStep] = useState(1);
