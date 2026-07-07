@@ -22,6 +22,15 @@ if ('Notification' in window) {
   Notification.requestPermission();
 }
 
+// Register the PWA service worker (production only, to avoid dev caching)
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch((err) => {
+      console.warn('Service worker registration failed:', err);
+    });
+  });
+}
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ThemeProvider>
