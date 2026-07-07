@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const generateOTP = require('../utils/generateOTP');
 const sendEmail = require('../utils/sendEmail');
+const { verificationEmail, passwordResetEmail } = require('../utils/emailTemplates');
 
 // REGISTER
 const register = async (req, res) => {
@@ -56,15 +57,8 @@ const register = async (req, res) => {
     // Send OTP email. If this fails, don't leave an orphaned unverified user
     // behind that would block future registrations with the same email.
     try {
-      await sendEmail(
-        email,
-        'Verify your SLING account',
-        `<h2>Welcome to SLING! 🎯</h2>
-         <p>SLING lets you move things across campus, easily.</p>
-         <p>Your OTP is: <b style="font-size:24px">${otp}</b></p>
-         <p>This OTP expires in 10 minutes.</p>
-         <p>Do not share this OTP with anyone.</p>`
-      );
+      const verify = verificationEmail(otp);
+      await sendEmail(email, verify.subject, verify.html);
     } catch (emailError) {
       if (isNewUser) {
         await User.findByIdAndDelete(user._id);
@@ -211,14 +205,8 @@ const forgotPassword = async (req, res) => {
     await user.save();
 
     try {
-      await sendEmail(
-        email,
-        'Reset your SLING password',
-        `<h2>Password Reset</h2>
-         <p>Your OTP is: <b style="font-size:24px">${otp}</b></p>
-         <p>This OTP expires in 10 minutes.</p>
-         <p>If you didn't request this, ignore this email.</p>`
-      );
+      const reset = passwordResetEmail(otp);
+      await sendEmail(email, reset.subject, reset.html);
     } catch (emailError) {
       return res.status(502).json({
         message: 'Could not send the reset email. Please try again in a moment.'

@@ -1,4 +1,5 @@
 const sendEmail = require('../utils/sendEmail');
+const { newRequestEmail } = require('../utils/emailTemplates');
 const Request = require('../models/Request');
 const User = require('../models/User');
 
@@ -60,16 +61,16 @@ const notifyUsers = await User.find({
 }).select('email name').limit(50).lean();
 
 // Don't await this — let it run in background
+const notif = newRequestEmail({
+  requesterName: req.user.name,
+  fromLocation,
+  toLocation,
+  itemDescription,
+  rewardLine
+});
 notifyUsers.forEach(u => {
-  sendEmail(
-    u.email,
-    '🎯 New SLING Request',
-    `<h2>New Request Posted!</h2>
-     <p><b>${req.user.name}</b> needs help from <b>${fromLocation}</b> to <b>${toLocation}</b></p>
-     <p>Item: ${itemDescription}</p>
-     <p>${rewardLine}</p>
-     <p>Open the app to accept this request!</p>`
-  ).catch(err => console.log('Email notification failed:', err));
+  sendEmail(u.email, notif.subject, notif.html)
+    .catch(err => console.log('Email notification failed:', err));
 });
 
     res.status(201).json({

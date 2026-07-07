@@ -28,13 +28,25 @@ Nobody is locked into a role. Today you are the one asking. Tomorrow you are the
 - **Numbers on your terms.** Phone numbers stay hidden until you decide to share them.
 - **Dark mode and notifications**, because a good chunk of campus life happens after sunset.
 
+## The emails
+
+Account emails are branded HTML, not plain text. Verification and password-reset codes arrive in a SLING-styled template with a gradient header, a clear code box, and a tidy footer. The templates live in `backend/src/utils/emailTemplates.js` and are shared across the verification, reset, and new-request emails.
+
+Before:
+
+![Plain OTP email before the redesign](docs/images/email-before.png)
+
+After:
+
+![Branded SLING OTP email after the redesign](docs/images/email-after.png)
+
 ## Tech stack
 
 Frontend runs on React 19 with Vite, styled with Tailwind CSS v4, using React Router, Axios, and the Socket.io client.
 
 Backend is Node.js with Express 5, Socket.io for real-time, and Mongoose for data access.
 
-Data lives in MongoDB Atlas. Auth uses JWT for stateless sessions, bcrypt for password hashing, and an email OTP for verification. Email is sent with Nodemailer over a pluggable SMTP setup (Gmail for local work, Brevo or SendGrid in production).
+Data lives in MongoDB Atlas. Auth uses JWT for stateless sessions, bcrypt for password hashing, and an email OTP for verification. Email goes through Brevo, using its HTTPS API in production (SMTP is blocked on many free hosts) with a Nodemailer SMTP fallback for local work.
 
 ## Project layout
 
