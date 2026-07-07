@@ -38,57 +38,66 @@ const MyRequestsPage = () => {
   }, [activeTab]);
 
   return (
-    <div className="min-h-screen bg-gray-50 max-w-md mx-auto">
+    <div className="min-h-screen relative overflow-hidden bg-gradient-to-b from-blue-50 via-white to-cyan-50 max-w-md mx-auto">
+      <div className="sling-aurora sling-aurora-1" style={{ top: '-60px', left: '-50px', width: '210px', height: '210px', background: '#60a5fa' }} />
+      <div className="sling-aurora sling-aurora-2" style={{ top: '180px', right: '-60px', width: '190px', height: '190px', background: '#22d3ee' }} />
+
       <Navbar />
 
-      <div className="px-4 py-4 pb-24 page-enter">
+      <div className="relative z-10 px-4 pt-7 pb-28 page-enter">
 
-        <h1 className="text-xl font-bold text-gray-800 mb-4">My Activity</h1>
+        <h1 className="text-3xl font-black text-slate-800 mb-1 animate-fade-in-up">My Activity</h1>
+        <p className="text-slate-500 text-sm mb-5 animate-fade-in-up">Everything you have slung and delivered.</p>
 
         {/* Tabs */}
-        <div className="flex bg-gray-100 rounded-xl p-1 mb-6">
+        <div className="sling-glass rounded-2xl p-1 mb-6 flex animate-fade-in-up anim-delay-1">
           <button
             onClick={() => setActiveTab('posted')}
-            className={`flex-1 py-2 rounded-lg text-sm font-medium transition ${
+            className={`sling-tap flex-1 py-2.5 rounded-xl text-sm font-bold transition ${
               activeTab === 'posted'
-                ? 'bg-white text-blue-600 shadow-sm'
-                : 'text-gray-500'
+                ? 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow'
+                : 'text-slate-500'
             }`}
           >
-            📝 Posted by me
+            📝 Posted
           </button>
           <button
             onClick={() => setActiveTab('assigned')}
-            className={`flex-1 py-2 rounded-lg text-sm font-medium transition ${
+            className={`sling-tap flex-1 py-2.5 rounded-xl text-sm font-bold transition ${
               activeTab === 'assigned'
-                ? 'bg-white text-blue-600 shadow-sm'
-                : 'text-gray-500'
+                ? 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow'
+                : 'text-slate-500'
             }`}
           >
-            🚀 Delivered by me 
+            🚀 Delivered
           </button>
         </div>
 
         {loading && (
-          <div className="text-center py-12 text-gray-400">Loading...</div>
+          <div className="space-y-3">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="bg-white rounded-3xl p-4 border border-slate-100 shadow-sm">
+                <div className="skeleton h-4 w-24 mb-3"></div>
+                <div className="skeleton h-4 w-full mb-2"></div>
+                <div className="skeleton h-3 w-2/3"></div>
+              </div>
+            ))}
+          </div>
         )}
 
         {!loading && requests.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-400 text-lg">
-              {activeTab === 'posted'
-                ? 'No requests posted yet'
-                : 'No deliveries yet'}
+          <div className="text-center py-14 animate-fade-in-up">
+            <div className="w-20 h-20 mx-auto mb-4 rounded-[1.5rem] bg-gradient-to-br from-blue-600 to-cyan-400 shadow-xl shadow-blue-500/30 flex items-center justify-center animate-wiggle text-4xl">
+              {activeTab === 'posted' ? '📝' : '🚀'}
+            </div>
+            <p className="sling-gradient-text text-lg font-black">
+              {activeTab === 'posted' ? 'No requests posted yet' : 'No deliveries yet'}
             </p>
             <button
-              onClick={() => navigate(
-                activeTab === 'posted' ? '/post-request' : '/home'
-              )}
-              className="mt-4 text-blue-600 text-sm font-medium"
+              onClick={() => navigate(activeTab === 'posted' ? '/post-request' : '/home')}
+              className="mt-4 text-blue-600 text-sm font-bold"
             >
-              {activeTab === 'posted'
-                ? 'Post your first request →'
-                : 'Browse open requests →'}
+              {activeTab === 'posted' ? 'Post your first request →' : 'Browse open requests →'}
             </button>
           </div>
         )}
@@ -98,31 +107,28 @@ const MyRequestsPage = () => {
             <div
               key={request._id}
               onClick={() => navigate(`/requests/${request._id}`)}
-              style={{ animationDelay: `${Math.min(index, 8) * 60}ms` }}
-              className="bg-white rounded-xl shadow-sm p-4 cursor-pointer hover:shadow-md active:scale-[0.99] transition animate-fade-in-up"
+              style={{ animationDelay: `${Math.min(index, 8) * 70}ms` }}
+              className="sling-tap animate-rise bg-white rounded-3xl shadow-sm p-4 cursor-pointer hover:shadow-lg hover:shadow-blue-500/10 border border-slate-100"
             >
-              <div className="flex justify-between items-start mb-2">
-                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[request.status]}`}>
+              <div className="flex justify-between items-start mb-2.5">
+                <span className={`px-2.5 py-1 rounded-lg text-[11px] font-bold ${STATUS_COLORS[request.status]}`}>
                   {request.status.replace('_', ' ').toUpperCase()}
                 </span>
-                <span className={`font-bold ${request.rewardType === 'party' ? 'text-pink-600' : 'text-green-600'}`}>
+                <span className={`font-bold text-sm ${request.rewardType === 'party' ? 'text-pink-600' : 'text-emerald-600'}`}>
                   {request.rewardType === 'party' ? '🎉 Party' : `₹${request.tipAmount / 100}`}
                 </span>
               </div>
 
-              <p className="text-gray-800 text-sm font-medium mb-2">
+              <p className="text-slate-800 text-sm font-semibold mb-2.5">
                 {request.itemDescription}
               </p>
 
-              <div className="flex items-center gap-2 text-xs text-gray-400">
-                <span>{request.fromLocation}</span>
+              <div className="flex items-center gap-2 text-xs text-slate-400">
+                <span className="font-medium text-slate-500">{request.fromLocation}</span>
                 <span>→</span>
-                <span>{request.toLocation}</span>
+                <span className="font-medium text-slate-500">{request.toLocation}</span>
+                <span className="ml-auto">{new Date(request.createdAt).toLocaleDateString()}</span>
               </div>
-
-              <p className="text-xs text-gray-400 mt-2">
-                {new Date(request.createdAt).toLocaleDateString()}
-              </p>
             </div>
           ))}
         </div>

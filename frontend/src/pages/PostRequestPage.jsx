@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createRequest } from '../api/requests';
+import { useCelebration } from '../context/CelebrationContext';
 import Navbar from '../components/Navbar';
 
 const LOCATIONS = [
@@ -54,6 +55,7 @@ const PostRequestPage = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+  const { celebrate } = useCelebration();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -94,6 +96,7 @@ const PostRequestPage = () => {
         partyNote: rewardType === 'party' ? partyNote.trim() : '',
         tipAmount: rewardType === 'tip' ? Number(tipAmount) * 100 : 0
       });
+      celebrate({ title: 'Request slung! 🚀', subtitle: 'Runners can grab it now' });
       navigate('/my-requests');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to create request');
@@ -103,21 +106,27 @@ const PostRequestPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 max-w-md mx-auto">
-      <Navbar />
+    <div className="min-h-screen relative overflow-hidden bg-gradient-to-b from-blue-50 via-white to-cyan-50 max-w-md mx-auto">
+    <div className="sling-aurora sling-aurora-1" style={{ top: '-60px', left: '-50px', width: '210px', height: '210px', background: '#60a5fa' }} />
+    <div className="sling-aurora sling-aurora-2" style={{ top: '260px', right: '-60px', width: '190px', height: '190px', background: '#22d3ee' }} />
 
-      <div className="px-4 py-4 pb-24 page-enter">
+    <Navbar />
 
-        {/* Header */}
-        <div className="flex items-center gap-3 mb-6">
-          <button
-            onClick={() => navigate('/home')}
-            className="text-gray-500 hover:text-gray-800"
-          >
-            ← Back
-          </button>
-          <h1 className="text-xl font-bold text-gray-800">Post a Request</h1>
+    <div className="relative z-10 px-4 pt-7 pb-28 page-enter">
+
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-6 animate-fade-in-up">
+        <button
+          onClick={() => navigate('/home')}
+          className="sling-tap w-10 h-10 rounded-2xl bg-white shadow-sm flex items-center justify-center text-slate-600 text-lg"
+        >
+          ←
+        </button>
+        <div>
+          <h1 className="text-2xl font-black text-slate-800 leading-none">Post a Request</h1>
+          <p className="text-slate-400 text-xs mt-1">Sling it across campus</p>
         </div>
+      </div>
 
         {error && (
           <div className="bg-red-50 text-red-600 px-4 py-3 rounded-lg mb-4 text-sm">
@@ -280,9 +289,9 @@ const PostRequestPage = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-3.5 rounded-xl font-semibold text-base hover:bg-blue-700 transition disabled:opacity-50"
+            className="sling-cta sling-tap w-full text-white py-4 rounded-2xl font-bold text-base shadow-xl shadow-blue-500/30 disabled:opacity-50"
           >
-            {loading ? 'Posting...' : 'Post Request 🚀'}
+            <span className="relative z-10">{loading ? 'Slinging...' : 'Post Request 🚀'}</span>
           </button>
 
         </form>

@@ -16,33 +16,39 @@ const Navbar = () => {
   const tabs = [
     { path: '/home', label: 'Browse', icon: '🔍' },
     { path: '/post-request', label: 'Post', icon: '➕' },
-    { path: '/my-requests', label: 'My Requests', icon: '📦' },
+    { path: '/my-requests', label: 'Mine', icon: '📦' },
     { path: '/profile', label: 'Profile', icon: '👤' },
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
-      <div className="flex justify-around items-center py-2">
-        {tabs.map((tab) => (
-          <button
-            key={tab.path}
-            onClick={() => navigate(tab.path)}
-            className={`flex flex-col items-center px-4 py-1 rounded-lg transition ${
-              isActive(tab.path)
-                ? 'text-blue-600'
-                : 'text-gray-400'
-            }`}
-          >
-            <span className="text-xl">{tab.icon}</span>
-            <span className="text-xs font-medium mt-0.5">{tab.label}</span>
-          </button>
-        ))}
+    <nav className="fixed bottom-4 inset-x-0 z-50 flex justify-center px-4 pointer-events-none">
+      <div className="sling-glass pointer-events-auto rounded-3xl shadow-xl shadow-slate-900/10 px-2 py-2 flex items-center gap-1 w-full max-w-md">
+        {tabs.map((tab) => {
+          const active = isActive(tab.path);
+          return (
+            <button
+              key={tab.path}
+              onClick={() => navigate(tab.path)}
+              className={`sling-tap relative flex-1 flex flex-col items-center py-1.5 rounded-2xl ${active ? 'bg-white/70' : ''}`}
+            >
+              {active && (
+                <span className="absolute -top-1 h-1 w-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500" />
+              )}
+              <span className={`text-lg transition-transform duration-300 ${active ? 'scale-125' : 'opacity-50'}`}>
+                {tab.icon}
+              </span>
+              <span className={`text-[10px] font-bold mt-0.5 ${active ? 'text-blue-600' : 'text-slate-400'}`}>
+                {tab.label}
+              </span>
+            </button>
+          );
+        })}
         <button
           onClick={handleLogout}
-          className="flex flex-col items-center px-4 py-1 text-red-400"
+          className="sling-tap flex-1 flex flex-col items-center py-1.5 rounded-2xl"
         >
-          <span className="text-xl">🚪</span>
-          <span className="text-xs font-medium mt-0.5">Logout</span>
+          <span className="text-lg opacity-50">🚪</span>
+          <span className="text-[10px] font-bold mt-0.5 text-rose-400">Logout</span>
         </button>
       </div>
     </nav>

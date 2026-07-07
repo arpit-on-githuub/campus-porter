@@ -104,10 +104,186 @@ body {
   50% { transform: translate(12px, -16px) scale(1.08); }
 }
 
+/* ============================================================
+   SLING — expressive layer (mobile-first, bold, playful)
+   ============================================================ */
+
+/* Animated gradient text */
+.sling-gradient-text {
+  background: linear-gradient(120deg, #2563eb, #06b6d4, #7c3aed, #2563eb);
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: sling-shine 6s linear infinite;
+}
+
+/* Glassmorphism surface */
+.sling-glass {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+}
+.dark .sling-glass {
+  background: rgba(30, 41, 59, 0.62);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+/* Big soft aurora blobs for backgrounds (clipped by a relative overflow parent) */
+.sling-aurora {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(60px);
+  opacity: 0.55;
+  pointer-events: none;
+  z-index: 0;
+}
+.sling-aurora-1 { animation: aurora-1 16s ease-in-out infinite; }
+.sling-aurora-2 { animation: aurora-2 20s ease-in-out infinite; }
+@keyframes aurora-1 {
+  0%, 100% { transform: translate(0,0) scale(1); }
+  50% { transform: translate(28px, 40px) scale(1.15); }
+}
+@keyframes aurora-2 {
+  0%, 100% { transform: translate(0,0) scale(1); }
+  50% { transform: translate(-36px, -28px) scale(1.12); }
+}
+
+/* Tap feedback */
+.sling-tap { transition: transform 0.15s cubic-bezier(0.34,1.56,0.64,1); }
+.sling-tap:active { transform: scale(0.95); }
+
+/* Gradient CTA with a moving sheen */
+.sling-cta {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(120deg, #2563eb, #06b6d4);
+  background-size: 200% auto;
+  animation: sling-shine 5s linear infinite;
+}
+.sling-cta::after {
+  content: "";
+  position: absolute;
+  top: 0; left: -60%;
+  width: 40%; height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.5), transparent);
+  transform: skewX(-20deg);
+  animation: sling-sheen 3.6s ease-in-out infinite;
+}
+@keyframes sling-sheen {
+  0% { left: -60%; }
+  55%, 100% { left: 150%; }
+}
+
+/* Bouncy rise entrance for cards */
+.animate-rise { animation: slingRise 0.55s cubic-bezier(0.22,1,0.36,1) both; }
+@keyframes slingRise {
+  from { opacity: 0; transform: translateY(22px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Wiggle for empty-state mascot */
+.animate-wiggle { animation: slingWiggle 2.8s ease-in-out infinite; }
+@keyframes slingWiggle {
+  0%, 100% { transform: rotate(-5deg) translateY(0); }
+  50% { transform: rotate(5deg) translateY(-7px); }
+}
+
+/* ---------- Celebration burst (post / accept) ---------- */
+.sling-burst-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 50% 45%, rgba(37,99,235,0.38), rgba(15,23,42,0.74));
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: sling-burst-overlay 1.9s ease forwards;
+}
+@keyframes sling-burst-overlay {
+  0% { opacity: 0; }
+  12% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+.sling-burst-glow {
+  position: absolute;
+  width: 320px; height: 320px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(6,182,212,0.55), transparent 65%);
+  animation: sling-burst-glow 1.9s ease-out forwards;
+}
+@keyframes sling-burst-glow {
+  0% { transform: scale(0.2); opacity: 0; }
+  30% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1.7); opacity: 0; }
+}
+.sling-burst-stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.sling-burst-logo {
+  width: 132px; height: 132px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 2rem;
+  background: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
+  box-shadow: 0 22px 55px -12px rgba(37,99,235,0.7);
+  animation: sling-zoom 1.9s cubic-bezier(0.22,1,0.36,1) forwards;
+}
+@keyframes sling-zoom {
+  0% { transform: scale(0.12) rotate(-28deg); opacity: 0; }
+  35% { transform: scale(1.2) rotate(7deg); opacity: 1; }
+  55% { transform: scale(1) rotate(0deg); }
+  80% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1.35); opacity: 0; }
+}
+.sling-burst-title {
+  margin-top: 22px;
+  font-size: 26px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+  text-align: center;
+  animation: slingPopIn 0.5s 0.25s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+.sling-burst-subtitle {
+  margin-top: 4px;
+  font-size: 14px;
+  color: rgba(255,255,255,0.82);
+  text-align: center;
+  animation: slingPopIn 0.5s 0.35s ease both;
+}
+.sling-confetti {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 10px; height: 14px;
+  border-radius: 2px;
+  transform-origin: center;
+  animation: sling-confetti 1.25s ease-out forwards;
+}
+@keyframes sling-confetti {
+  0% { transform: rotate(calc(var(--i) * 30deg)) translateY(0) scale(0); opacity: 0; }
+  25% { opacity: 1; }
+  100% { transform: rotate(calc(var(--i) * 30deg)) translateY(calc(-125px - var(--i) * 5px)) scale(1); opacity: 0; }
+}
+.sling-confetti:nth-child(4n)   { background: #2563eb; }
+.sling-confetti:nth-child(4n+1) { background: #06b6d4; }
+.sling-confetti:nth-child(4n+2) { background: #f59e0b; }
+.sling-confetti:nth-child(4n+3) { background: #ec4899; }
+
 /* Respect users who prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .sling-badge, .sling-parcel, .sling-speedlines line, .sling-wordmark,
-  .animate-fade-in-up, .animate-pop-in, .sling-blob, .skeleton {
+  .animate-fade-in-up, .animate-pop-in, .sling-blob, .skeleton,
+  .sling-gradient-text, .sling-aurora, .sling-cta, .sling-cta::after,
+  .animate-rise, .animate-wiggle, .sling-confetti,
+  .sling-burst-logo, .sling-burst-glow, .sling-burst-overlay, .sling-burst-title, .sling-burst-subtitle {
     animation: none !important;
   }
 }

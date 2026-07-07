@@ -21,41 +21,44 @@ const [phoneSuccess, setPhoneSuccess] = useState('');
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 max-w-md mx-auto">
+    <div className="min-h-screen relative overflow-hidden bg-gradient-to-b from-blue-50 via-white to-cyan-50 max-w-md mx-auto">
+      <div className="sling-aurora sling-aurora-1" style={{ top: '-60px', right: '-50px', width: '210px', height: '210px', background: '#818cf8' }} />
+      <div className="sling-aurora sling-aurora-2" style={{ top: '220px', left: '-60px', width: '190px', height: '190px', background: '#22d3ee' }} />
+
       <Navbar />
 
-      <div className="px-4 py-4 pb-24 page-enter">
+      <div className="relative z-10 px-4 pt-7 pb-28 page-enter">
 
         {/* Profile header */}
-        <div className="bg-white rounded-xl shadow-sm p-6 mb-4 text-center">
-          <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-3xl font-bold mx-auto mb-3">
+        <div className="relative rounded-3xl p-6 mb-4 text-center overflow-hidden shadow-xl shadow-blue-500/20 bg-gradient-to-br from-blue-600 to-cyan-400 animate-fade-in-up">
+          <div className="w-24 h-24 bg-white/20 backdrop-blur rounded-3xl flex items-center justify-center text-white text-4xl font-black mx-auto mb-3 border border-white/30">
             {user?.name?.charAt(0).toUpperCase()}
           </div>
-          <h1 className="text-xl font-bold text-gray-800">{user?.name}</h1>
-          <p className="text-gray-400 text-sm mt-1">{user?.email}</p>
+          <h1 className="text-2xl font-black text-white">{user?.name}</h1>
+          <p className="text-blue-50 text-sm mt-1">{user?.email}</p>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 gap-3 mb-4">
-          <div className="bg-white rounded-xl shadow-sm p-4 text-center">
-            <p className="text-3xl font-bold text-blue-600">
+        <div className="grid grid-cols-2 gap-3 mb-4 animate-fade-in-up anim-delay-1">
+          <div className="bg-white rounded-3xl shadow-sm p-5 text-center">
+            <p className="text-3xl font-black sling-gradient-text">
               {user?.totalDeliveries || 0}
             </p>
-            <p className="text-gray-400 text-sm mt-1">Deliveries</p>
+            <p className="text-slate-400 text-xs font-semibold mt-1">Deliveries</p>
           </div>
-          <div className="bg-white rounded-xl shadow-sm p-4 text-center">
-            <p className="text-3xl font-bold text-yellow-500">
+          <div className="bg-white rounded-3xl shadow-sm p-5 text-center">
+            <p className="text-3xl font-black text-amber-500">
               {user?.rating > 0 ? `⭐ ${user.rating}` : '—'}
             </p>
-            <p className="text-gray-400 text-sm mt-1">Rating</p>
+            <p className="text-slate-400 text-xs font-semibold mt-1">Rating</p>
           </div>
         </div>
 
         {/* IIT-J badge */}
-        <div className="bg-blue-50 rounded-xl p-4 mb-4 flex items-center gap-3">
+        <div className="sling-glass rounded-3xl p-4 mb-4 flex items-center gap-3 animate-fade-in-up anim-delay-2">
           <span className="text-2xl">🎓</span>
           <div>
-            <p className="text-blue-700 font-semibold text-sm">
+            <p className="text-blue-700 font-bold text-sm">
               Verified IIT Jodhpur Student
             </p>
             <p className="text-blue-400 text-xs mt-0.5">
@@ -65,7 +68,7 @@ const [phoneSuccess, setPhoneSuccess] = useState('');
         </div>
 
         {/* Phone number section */}
-<div className={`rounded-xl p-4 mb-4 ${isDark ? 'bg-slate-800' : 'bg-white'} shadow-sm`}>
+        <div className={`rounded-3xl p-4 mb-4 ${isDark ? 'bg-slate-800' : 'bg-white'} shadow-sm`}>
   <p className={`text-sm font-semibold mb-3 ${isDark ? 'text-white' : 'text-slate-800'}`}>
     📞 Phone Number
   </p>
@@ -110,7 +113,7 @@ const [phoneSuccess, setPhoneSuccess] = useState('');
   </div>
 </div>
 {/* Email notifications toggle */}
-<div className={`rounded-xl p-4 mb-4 flex justify-between items-center ${isDark ? 'bg-slate-800' : 'bg-white'} shadow-sm`}>
+<div className={`rounded-3xl p-4 mb-4 flex justify-between items-center ${isDark ? 'bg-slate-800' : 'bg-white'} shadow-sm`}>
   <div>
     <p className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-slate-800'}`}>
       📧 Email Notifications
@@ -142,18 +145,18 @@ const [phoneSuccess, setPhoneSuccess] = useState('');
 </div>
 
         {/* Actions */}
-        <div className="space-y-3">
+        <div className="space-y-3 animate-fade-in-up anim-delay-3">
           <button
             onClick={() => navigate('/my-requests')}
-            className="w-full bg-white rounded-xl shadow-sm p-4 text-left flex justify-between items-center"
+            className="sling-tap w-full bg-white rounded-3xl shadow-sm p-4 text-left flex justify-between items-center"
           >
-            <span className="text-gray-700 font-medium">📦 My Requests</span>
-            <span className="text-gray-400">→</span>
+            <span className="text-slate-700 font-semibold">📦 My Requests</span>
+            <span className="text-slate-400">→</span>
           </button>
 
           <button
             onClick={handleLogout}
-            className="w-full bg-red-50 text-red-500 py-3.5 rounded-xl font-semibold hover:bg-red-100 transition"
+            className="sling-tap w-full bg-rose-50 text-rose-500 py-3.5 rounded-3xl font-bold hover:bg-rose-100 transition"
           >
             🚪 Logout
           </button>

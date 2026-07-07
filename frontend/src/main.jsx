@@ -5,6 +5,7 @@ import './index.css'
 
 import { AuthProvider } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
+import { CelebrationProvider } from './context/CelebrationContext'
 import ProtectedRoute from './components/ProtectedRoute'
 
 import LoginPage from './pages/LoginPage'
@@ -35,8 +36,9 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ThemeProvider>
       <AuthProvider>
-        <BrowserRouter>
-          <Routes>
+        <CelebrationProvider>
+          <BrowserRouter>
+            <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/verify-otp" element={<OTPPage />} />
@@ -58,7 +60,8 @@ createRoot(document.getElementById('root')).render(
             } />
             <Route path="/" element={<Navigate to="/login" replace />} />
           </Routes>
-        </BrowserRouter>
+          </BrowserRouter>
+        </CelebrationProvider>
       </AuthProvider>
     </ThemeProvider>
   </StrictMode>

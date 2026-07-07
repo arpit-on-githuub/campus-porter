@@ -8,6 +8,7 @@ import {
 } from '../api/requests';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { useCelebration } from '../context/CelebrationContext';
 import Navbar from '../components/Navbar';
 import ChatBox from '../components/ChatBox';
 import { sendNotification } from '../utils/notify';
@@ -44,6 +45,7 @@ const RequestDetailPage = () => {
   const { user } = useAuth();
   const { isDark } = useTheme();
   const navigate = useNavigate();
+  const { celebrate } = useCelebration();
 
   const fetchRequest = async () => {
     try {
@@ -75,6 +77,7 @@ const RequestDetailPage = () => {
     setActionLoading(true);
     try {
       await acceptRequest(id);
+      celebrate({ title: "You're on it! 🎯", subtitle: 'Request accepted' });
       await fetchRequest();
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to accept');
@@ -143,10 +146,10 @@ const RequestDetailPage = () => {
   const isPorter = request?.porter?._id === user?.id;
 
   return (
-    <div className={`min-h-screen max-w-md mx-auto ${isDark ? 'bg-slate-900' : 'bg-gray-50'}`}>
+    <div className={`min-h-screen max-w-md mx-auto ${isDark ? 'bg-slate-900' : 'bg-gradient-to-b from-blue-50 via-white to-cyan-50'}`}>
       <Navbar />
 
-      <div className="px-4 py-4 pb-24 page-enter">
+      <div className="px-4 py-4 pb-28 page-enter">
         <div className="flex items-center gap-3 mb-4">
           <button
             onClick={() => navigate(-1)}
