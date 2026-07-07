@@ -115,7 +115,7 @@ The backend runs on Render's free tier, which supports WebSockets and builds str
 
 The frontend runs on Vercel as a static Vite build (`npm run build` produces `dist/`). A small `vercel.json` rewrites every route to `index.html` so client-side routing and page refreshes work. `VITE_API_URL` points at the Render backend URL, and any change to it needs a fresh deploy because it is baked in at build time.
 
-Email is handled by Brevo over SMTP, configured entirely through `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_USER`, `EMAIL_PASS`, and `EMAIL_FROM`, so no code changes when the provider changes.
+Email goes through Brevo's HTTPS API rather than SMTP, because Render's free tier blocks outbound SMTP ports. It needs just two variables, `BREVO_API_KEY` and `EMAIL_FROM` (a Brevo-verified sender). The SMTP path is kept as a fallback for local development.
 
 The database stays on MongoDB Atlas. Network Access is opened so the backend host can connect, and backups are turned on.
 
@@ -154,6 +154,7 @@ Building SLING was less a straight line and more a series of "wait, why isn't th
 | Problem | Root cause | Fix | Status |
 | --- | --- | --- | --- |
 | OTP emails never arrived and signup hung | Gmail SMTP is blocked on cloud hosts, and the send had no timeout | Added SMTP timeouts, made the provider swappable, moved to Brevo | Fixed |
+| Brevo email still failed once deployed | Render's free tier blocks outbound SMTP ports too | Send through Brevo's HTTPS API instead of SMTP | Fixed |
 | Failed signups blocked retries | The account was saved before the email was sent | Roll back the account on email failure, let unverified emails re-register | Fixed |
 | Backend was about to go down | Railway free trial credit ran out | Moved the backend to Render's free tier | Fixed |
 | First hosting pick was a dead end | Koyeb dropped its free tier and now wants a card | Went with Render free instead | Fixed |
@@ -223,6 +224,14 @@ A short list of things that worked fine on a laptop and broke the moment they we
 **Why it happened.** SLING is a single-page app, so the browser is meant to handle routing. The static host, though, went looking for a real /login file, did not find one, and gave up. Nothing told it to hand every path to the app.
 
 **The fix.** A small vercel.json rewrites every route to index.html. The host still serves real files like scripts and icons directly, and only falls back to the app for actual routes, which lets the in-app router take over. This also matters for the installed PWA, where deep links and refreshes need to resolve.
+
+### 8. Email blocked again, this time by the host
+
+**What went wrong.** Even with Brevo set up, sending still failed in production with a ten second timeout, the same shape as the very first Gmail problem.
+
+**Why it happened.** In September 2025 Render started blocking outbound SMTP ports on its free tier to curb spam. So Brevo's SMTP relay on port 587 could not connect either. It was the same wall as before, just moved from Gmail to the host.
+
+**The fix.** Switch from SMTP to Brevo's HTTPS API. The email helper now posts to Brevo over port 443, which no host blocks, whenever a BREVO_API_KEY is set, and keeps SMTP as a fallback for local development. Email finally sends from production.
 
 ## Roadmap
 
