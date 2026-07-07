@@ -16,9 +16,11 @@ const register = async (req, res) => {
       });
     }
 
-    // Check if user already exists
+    // Check if user already exists AND is verified. An unverified record
+    // (e.g. from an earlier attempt where the OTP email failed) is allowed to
+    // re-register so the user is never permanently locked out.
     const existingUser = await User.findOne({ email });
-    if (existingUser) {
+    if (existingUser && existingUser.isVerified) {
       return res.status(400).json({ 
         message: 'User already exists with this email' 
       });
@@ -32,24 +34,45 @@ const register = async (req, res) => {
     const otp = generateOTP();
     const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
-    // Create user
-    const user = await User.create({
-      name,
-      email,
-      password: hashedPassword,
-      otp,
-      otpExpiresAt
-    });
+    // Create the user (or refresh the existing unverified one)
+    let user;
+    const isNewUser = !existingUser;
+    if (existingUser) {
+      existingUser.name = name;
+      existingUser.password = hashedPassword;
+      existingUser.otp = otp;
+      existingUser.otpExpiresAt = otpExpiresAt;
+      user = await existingUser.save();
+    } else {
+      user = await User.create({
+        name,
+        email,
+        password: hashedPassword,
+        otp,
+        otpExpiresAt
+      });
+    }
 
-    // Send OTP email
-    await sendEmail(
-      email,
-      'Verify your Campus Porter account',
-      `<h2>Welcome to Campus Porter!</h2>
-       <p>Your OTP is: <b style="font-size:24px">${otp}</b></p>
-       <p>This OTP expires in 10 minutes.</p>
-       <p>Do not share this OTP with anyone.</p>`
-    );
+    // Send OTP email. If this fails, don't leave an orphaned unverified user
+    // behind that would block future registrations with the same email.
+    try {
+      await sendEmail(
+        email,
+        'Verify your SLING account',
+        `<h2>Welcome to SLING! 🎯</h2>
+         <p>SLING lets you move things across campus, easily.</p>
+         <p>Your OTP is: <b style="font-size:24px">${otp}</b></p>
+         <p>This OTP expires in 10 minutes.</p>
+         <p>Do not share this OTP with anyone.</p>`
+      );
+    } catch (emailError) {
+      if (isNewUser) {
+        await User.findByIdAndDelete(user._id);
+      }
+      return res.status(502).json({
+        message: 'Could not send the verification email. Please try again in a moment.'
+      });
+    }
 
     res.status(201).json({ 
       message: 'Registration successful. Please check your email for OTP.',
@@ -187,14 +210,20 @@ const forgotPassword = async (req, res) => {
     user.otpExpiresAt = otpExpiresAt;
     await user.save();
 
-    await sendEmail(
-      email,
-      'Reset your Campus Porter password',
-      `<h2>Password Reset</h2>
-       <p>Your OTP is: <b style="font-size:24px">${otp}</b></p>
-       <p>This OTP expires in 10 minutes.</p>
-       <p>If you didn't request this, ignore this email.</p>`
-    );
+    try {
+      await sendEmail(
+        email,
+        'Reset your SLING password',
+        `<h2>Password Reset</h2>
+         <p>Your OTP is: <b style="font-size:24px">${otp}</b></p>
+         <p>This OTP expires in 10 minutes.</p>
+         <p>If you didn't request this, ignore this email.</p>`
+      );
+    } catch (emailError) {
+      return res.status(502).json({
+        message: 'Could not send the reset email. Please try again in a moment.'
+      });
+    }
 
     res.json({ 
       message: 'OTP sent to your email',

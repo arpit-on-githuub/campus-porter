@@ -15,41 +15,59 @@ const validTransitions = {
 // CREATE REQUEST
 const createRequest = async (req, res) => {
   try {
-    const { fromLocation, toLocation, itemDescription, tipAmount } = req.body;
+    const { fromLocation, toLocation, itemDescription, tipAmount, rewardType, partyNote } = req.body;
 
     // Validate required fields
-    if (!fromLocation || !toLocation || !itemDescription || tipAmount === undefined) {
+    if (!fromLocation || !toLocation || !itemDescription) {
       return res.status(400).json({ 
-        message: 'Please provide fromLocation, toLocation, itemDescription and tipAmount' 
+        message: 'Please provide fromLocation, toLocation and itemDescription' 
       });
     }
 
-    // Create request with 15 minute expiry
+    // The requester thanks the runner with either a cash tip or a party/treat
+    const reward = rewardType === 'party' ? 'party' : 'tip';
+
+    if (reward === 'tip' && (tipAmount === undefined || Number(tipAmount) < 1)) {
+      return res.status(400).json({ message: 'Please provide a valid tip amount' });
+    }
+    if (reward === 'party' && (!partyNote || !partyNote.trim())) {
+      return res.status(400).json({ message: 'Please describe the party or treat' });
+    }
+
+    // Create request with 24 hour expiry
     const request = await Request.create({
       requester: req.user._id,
       fromLocation,
       toLocation,
       itemDescription,
-      tipAmount,
+      rewardType: reward,
+      partyNote: reward === 'party' ? partyNote.trim() : '',
+      tipAmount: reward === 'tip' ? tipAmount : 0,
       expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000)
     });
 
-    // Send email notification to all verified users
-// (In production, only send to users who opted in)
+    const rewardLine = reward === 'party'
+      ? `Reward: 🎉 Party / Treat${request.partyNote ? ` (${request.partyNote})` : ''}`
+      : `Tip: ₹${request.tipAmount / 100}`;
+
+    // Notify verified users who have opted in to email notifications.
+    // Filtering by emailNotifications keeps us well within transactional-email
+    // quotas as the user base grows.
 const notifyUsers = await User.find({ 
   isVerified: true,
+  emailNotifications: { $ne: false },
   _id: { $ne: req.user._id }
-}).select('email name').limit(50);
+}).select('email name').limit(50).lean();
 
 // Don't await this — let it run in background
 notifyUsers.forEach(u => {
   sendEmail(
     u.email,
-    '🎓 New Campus Porter Request',
+    '🎯 New SLING Request',
     `<h2>New Request Posted!</h2>
      <p><b>${req.user.name}</b> needs help from <b>${fromLocation}</b> to <b>${toLocation}</b></p>
      <p>Item: ${itemDescription}</p>
-     <p>Tip: ₹${tipAmount / 100}</p>
+     <p>${rewardLine}</p>
      <p>Open the app to accept this request!</p>`
   ).catch(err => console.log('Email notification failed:', err));
 });
@@ -101,7 +119,8 @@ const getRequests = async (req, res) => {
     const requests = await Request.find(filter)
       .sort(sort)
       .populate('requester', 'name email rating totalDeliveries phone')
-      .limit(50);
+      .limit(50)
+      .lean();
 
     res.json({
       count: requests.length,

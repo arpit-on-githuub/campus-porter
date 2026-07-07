@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { loginUser } from '../api/auth';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import SlingLogo from '../components/SlingLogo';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -47,19 +48,14 @@ const LoginPage = () => {
 
       {/* Logo */}
       <div className="text-center mb-8">
-        <div className="w-20 h-20 bg-gradient-to-br from-blue-600 to-cyan-400 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-xl shadow-blue-500/30">
-          <span className="text-4xl">🎓</span>
-        </div>
-        <h1 className="text-3xl font-black bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-          Campus Porter
-        </h1>
-        <p className={`text-sm mt-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+        <SlingLogo size={80} withWordmark tagline />
+        <p className={`text-sm mt-2 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
           IIT Jodhpur Delivery Network
         </p>
       </div>
 
       {/* Card */}
-      <div className={`w-full max-w-sm rounded-3xl shadow-xl p-8 ${
+      <div className={`w-full max-w-sm rounded-3xl shadow-xl p-8 animate-fade-in-up anim-delay-1 ${
         isDark ? 'bg-slate-800 shadow-slate-900' : 'bg-white shadow-slate-200'
       }`}>
         <h2 className={`text-xl font-bold mb-6 ${isDark ? 'text-white' : 'text-slate-800'}`}>
@@ -129,7 +125,7 @@ const LoginPage = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-3.5 rounded-xl font-semibold text-base hover:opacity-90 transition shadow-lg shadow-blue-500/30 disabled:opacity-50"
+            className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-3.5 rounded-xl font-semibold text-base hover:opacity-90 active:scale-[0.98] transition shadow-lg shadow-blue-500/30 disabled:opacity-50"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">

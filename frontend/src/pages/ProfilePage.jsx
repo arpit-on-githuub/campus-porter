@@ -5,6 +5,8 @@ import { useTheme } from '../context/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const ProfilePage = () => {
   const { user, logout } = useAuth();
 const { isDark } = useTheme();
@@ -22,7 +24,7 @@ const [phoneSuccess, setPhoneSuccess] = useState('');
     <div className="min-h-screen bg-gray-50 max-w-md mx-auto">
       <Navbar />
 
-      <div className="px-4 py-4 pb-24">
+      <div className="px-4 py-4 pb-24 page-enter">
 
         {/* Profile header */}
         <div className="bg-white rounded-xl shadow-sm p-6 mb-4 text-center">
@@ -88,7 +90,7 @@ const [phoneSuccess, setPhoneSuccess] = useState('');
         setPhoneLoading(true);
         try {
           await axios.patch(
-            'http://localhost:3000/api/auth/update-phone',
+            `${API_URL}/api/auth/update-phone`,
             { phone, isPhoneShared: true },
             { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
           );
@@ -121,7 +123,7 @@ const [phoneSuccess, setPhoneSuccess] = useState('');
     onClick={async () => {
       try {
         await axios.patch(
-          'http://localhost:3000/api/auth/update-phone',
+          `${API_URL}/api/auth/update-phone`,
           { emailNotifications: !user.emailNotifications },
           { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
         );

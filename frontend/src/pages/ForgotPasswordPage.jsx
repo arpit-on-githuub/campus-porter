@@ -74,7 +74,7 @@ const ForgotPasswordPage = () => {
         {isDark ? '☀️' : '🌙'}
       </button>
 
-      <div className={`w-full max-w-sm rounded-3xl shadow-xl p-8 ${
+      <div className={`w-full max-w-sm rounded-3xl shadow-xl p-8 animate-fade-in-up ${
         isDark ? 'bg-slate-800' : 'bg-white'
       }`}>
 

@@ -6,7 +6,6 @@ import {
   updateStatus,
   rateRequest,
 } from '../api/requests';
-import { createOrder, verifyPayment } from '../api/payments';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import Navbar from '../components/Navbar';
@@ -62,7 +61,7 @@ const RequestDetailPage = () => {
 
   // Listen for cancellation
   import('socket.io-client').then(({ io }) => {
-    const socket = io('http://localhost:3000');
+    const socket = io(import.meta.env.VITE_API_URL);
     socket.emit('join_room', id);
     socket.on('request_cancelled', (data) => {
       alert(`⚠️ ${data.message}`);
@@ -88,47 +87,10 @@ const RequestDetailPage = () => {
     setActionLoading(true);
     try {
       await updateStatus(id, newStatus);
+      sendNotification('SLING', `Request status updated to ${STATUS_LABELS[newStatus] || newStatus}`);
       await fetchRequest();
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to update status');
-    } finally {
-      setActionLoading(false);
-    }
-  };
-
-  const handlePayment = async () => {
-    setActionLoading(true);
-    try {
-      const orderData = await createOrder(id);
-
-      const options = {
-        key: orderData.keyId,
-        amount: orderData.amount,
-        currency: orderData.currency,
-        name: 'Campus Porter',
-        description: 'Tip for delivery',
-        order_id: orderData.orderId,
-        handler: async (response) => {
-          try {
-            await verifyPayment({
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-            });
-            alert('Payment successful! Thank you.');
-            await fetchRequest();
-          } catch (err) {
-            alert('Payment verification failed');
-          }
-        },
-        prefill: { email: user?.email },
-        theme: { color: '#2563eb' },
-      };
-
-      const razorpay = new window.Razorpay(options);
-      razorpay.open();
-    } catch (err) {
-      setError(err.response?.data?.message || 'Payment failed');
     } finally {
       setActionLoading(false);
     }
@@ -207,8 +169,8 @@ const RequestDetailPage = () => {
           <span className={`px-3 py-1 rounded-full text-sm font-medium ${STATUS_COLORS[request.status]}`}>
             {STATUS_LABELS[request.status]}
           </span>
-          <span className="text-green-500 font-bold text-xl">
-            ₹{request.tipAmount / 100}
+          <span className={`font-bold text-xl ${request.rewardType === 'party' ? 'text-pink-500' : 'text-green-500'}`}>
+            {request.rewardType === 'party' ? '🎉 Party / Treat' : `₹${request.tipAmount / 100}`}
           </span>
         </div>
 
@@ -226,6 +188,19 @@ const RequestDetailPage = () => {
           <p className={`font-medium mb-4 ${isDark ? 'text-slate-100' : 'text-gray-800'}`}>
             {request.itemDescription}
           </p>
+
+          {request.rewardType === 'party' && (
+            <div className="mb-4 flex flex-wrap items-center gap-2 text-sm">
+              <span className="bg-pink-500/10 text-pink-500 px-2 py-1 rounded-lg font-medium">
+                🎉 Party / Treat
+              </span>
+              {request.partyNote && (
+                <span className={isDark ? 'text-slate-300' : 'text-gray-600'}>
+                  {request.partyNote}
+                </span>
+              )}
+            </div>
+          )}
 
           <div className={`border-t pt-3 ${isDark ? 'border-slate-700' : 'border-gray-100'}`}>
             <p className={`text-xs mb-2 ${isDark ? 'text-slate-400' : 'text-gray-400'}`}>
@@ -288,7 +263,6 @@ const RequestDetailPage = () => {
               {actionLoading ? 'Updating...' : '📦 Mark as Picked Up'}
             </button>
           )}
-          sendNotification('Campus Porter', `Your request status updated to ${newStatus}`);
 
           {isPorter && request.status === 'picked_up' && (
             <button
@@ -299,7 +273,6 @@ const RequestDetailPage = () => {
               {actionLoading ? 'Updating...' : '🚀 Mark as Delivered'}
             </button>
           )}
-          sendNotification('Campus Porter', `Your request status updated to ${newStatus}`);
 
           {isRequester && request.status === 'delivered' && (
             <div className="space-y-3">
@@ -310,17 +283,13 @@ const RequestDetailPage = () => {
               >
                 {actionLoading ? 'Confirming...' : '✅ Confirm Delivery'}
               </button>
-              sendNotification('Campus Porter', `Your request status updated to ${newStatus}`);
-              <button
-                onClick={handlePayment}
-                disabled={actionLoading}
-                className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-3.5 rounded-xl font-semibold disabled:opacity-50"
-              >
-                {actionLoading ? 'Processing...' : `💳 Pay Tip ₹${request.tipAmount / 100}`}
-              </button>
+              <p className={`text-center text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                {request.rewardType === 'party'
+                  ? `Time to deliver on the treat you promised${request.partyNote ? `: ${request.partyNote}` : ''} 🎉`
+                  : `Settle the ₹${request.tipAmount / 100} tip with your runner directly over UPI.`}
+              </p>
             </div>
           )}
-sendNotification('Campus Porter', `Your request status updated to ${newStatus}`);
           {(isRequester || isPorter) &&
             ['accepted', 'picked_up', 'delivered', 'completed'].includes(request.status) && (
               <div className="space-y-3">

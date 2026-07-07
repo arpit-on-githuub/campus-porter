@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { verifyOTP } from '../api/auth';
+import SlingLogo from '../components/SlingLogo';
 
 const OTPPage = () => {
   const [otp, setOtp] = useState('');
@@ -45,11 +46,11 @@ const OTPPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="bg-white rounded-2xl shadow-md p-8 w-full max-w-md">
+      <div className="bg-white rounded-2xl shadow-md p-8 w-full max-w-md animate-fade-in-up">
 
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-blue-600">Campus Porter</h1>
-          <p className="text-gray-500 mt-1">IIT Jodhpur Delivery Network</p>
+          <SlingLogo size={64} withWordmark />
+          <p className="text-gray-500 mt-2 text-sm">IIT Jodhpur Delivery Network</p>
         </div>
 
         <h2 className="text-xl font-semibold text-gray-800 mb-2">

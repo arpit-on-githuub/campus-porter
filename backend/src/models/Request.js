@@ -32,6 +32,17 @@ const requestSchema = new mongoose.Schema({
     required: true,
     min: 0
   },
+  rewardType: {
+    type: String,
+    enum: ['tip', 'party'],
+    default: 'tip'
+  },
+  partyNote: {
+    type: String,
+    trim: true,
+    maxlength: 200,
+    default: ''
+  },
   status: {
     type: String,
     enum: ['open', 'accepted', 'picked_up', 'delivered', 'completed', 'cancelled'],

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { getRequests } from '../api/requests';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
+import SlingLogo from '../components/SlingLogo';
 
 const HomePage = () => {
   const [requests, setRequests] = useState([]);
@@ -39,7 +40,18 @@ const HomePage = () => {
     <div className="min-h-screen bg-gray-50 max-w-md mx-auto">
        <Navbar />
 
-      <div className="px-4 py-4 pb-24">
+      <div className="px-4 py-4 pb-24 page-enter">
+
+        {/* Brand */}
+        <div className="flex items-center gap-2 mb-4">
+          <SlingLogo size={34} />
+          <span
+            className="font-black tracking-tight text-lg bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent sling-wordmark"
+            style={{ backgroundSize: '200% auto' }}
+          >
+            SLING
+          </span>
+        </div>
 
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
@@ -102,11 +114,12 @@ const HomePage = () => {
         )}
 
         <div className="space-y-4">
-          {requests.map((request) => (
+          {requests.map((request, index) => (
             <div
               key={request._id}
               onClick={() => navigate(`/requests/${request._id}`)}
-              className="bg-white rounded-xl shadow-sm p-5 cursor-pointer hover:shadow-md transition border border-gray-100"
+              style={{ animationDelay: `${Math.min(index, 8) * 60}ms` }}
+              className="bg-white rounded-xl shadow-sm p-5 cursor-pointer hover:shadow-md active:scale-[0.99] transition border border-gray-100 animate-fade-in-up"
             >
               {/* Location row */}
               <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
@@ -140,10 +153,19 @@ const HomePage = () => {
                   )}
                 </div>
                 <div className="text-right">
-                  <span className="text-green-600 font-bold text-lg">
-                    ₹{request.tipAmount / 100}
-                  </span>
-                  <p className="text-gray-400 text-xs">tip</p>
+                  {request.rewardType === 'party' ? (
+                    <>
+                      <span className="text-pink-600 font-bold text-lg">🎉</span>
+                      <p className="text-gray-400 text-xs">party/treat</p>
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-green-600 font-bold text-lg">
+                        ₹{request.tipAmount / 100}
+                      </span>
+                      <p className="text-gray-400 text-xs">tip</p>
+                    </>
+                  )}
                 </div>
               </div>
 

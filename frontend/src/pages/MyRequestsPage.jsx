@@ -41,7 +41,7 @@ const MyRequestsPage = () => {
     <div className="min-h-screen bg-gray-50 max-w-md mx-auto">
       <Navbar />
 
-      <div className="px-4 py-4 pb-24">
+      <div className="px-4 py-4 pb-24 page-enter">
 
         <h1 className="text-xl font-bold text-gray-800 mb-4">My Activity</h1>
 
@@ -94,18 +94,19 @@ const MyRequestsPage = () => {
         )}
 
         <div className="space-y-3">
-          {requests.map((request) => (
+          {requests.map((request, index) => (
             <div
               key={request._id}
               onClick={() => navigate(`/requests/${request._id}`)}
-              className="bg-white rounded-xl shadow-sm p-4 cursor-pointer hover:shadow-md transition"
+              style={{ animationDelay: `${Math.min(index, 8) * 60}ms` }}
+              className="bg-white rounded-xl shadow-sm p-4 cursor-pointer hover:shadow-md active:scale-[0.99] transition animate-fade-in-up"
             >
               <div className="flex justify-between items-start mb-2">
                 <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[request.status]}`}>
                   {request.status.replace('_', ' ').toUpperCase()}
                 </span>
-                <span className="text-green-600 font-bold">
-                  ₹{request.tipAmount / 100}
+                <span className={`font-bold ${request.rewardType === 'party' ? 'text-pink-600' : 'text-green-600'}`}>
+                  {request.rewardType === 'party' ? '🎉 Party' : `₹${request.tipAmount / 100}`}
                 </span>
               </div>
 
