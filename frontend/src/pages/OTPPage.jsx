@@ -45,8 +45,10 @@ const OTPPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="bg-white rounded-2xl shadow-md p-8 w-full max-w-md animate-fade-in-up">
+    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-cyan-50 flex items-center justify-center px-4">
+      <div className="sling-aurora sling-aurora-1" style={{ top: '-40px', left: '-70px', width: '250px', height: '250px', background: '#60a5fa' }} />
+      <div className="sling-aurora sling-aurora-2" style={{ bottom: '-50px', right: '-70px', width: '230px', height: '230px', background: '#22d3ee' }} />
+      <div className="relative z-10 bg-white rounded-3xl shadow-xl p-8 w-full max-w-md animate-fade-in-up">
 
         <div className="text-center mb-8">
           <SlingLogo size={64} withWordmark />
@@ -92,9 +94,9 @@ const OTPPage = () => {
           <button
             type="submit"
             disabled={loading || otp.length !== 6}
-            className="w-full bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition disabled:opacity-50"
+            className="sling-cta sling-tap w-full text-white py-3 rounded-xl font-bold disabled:opacity-50"
           >
-            {loading ? 'Verifying...' : 'Verify OTP'}
+            <span className="relative z-10">{loading ? 'Verifying...' : 'Verify OTP'}</span>
           </button>
         </form>
 

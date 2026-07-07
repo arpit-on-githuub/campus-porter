@@ -62,9 +62,11 @@ const ForgotPasswordPage = () => {
   };
 
   return (
-    <div className={`min-h-screen flex flex-col items-center justify-center px-4 ${
+    <div className={`min-h-screen relative overflow-hidden flex flex-col items-center justify-center px-4 ${
       isDark ? 'bg-slate-900' : 'bg-gradient-to-br from-blue-50 via-white to-cyan-50'
     }`}>
+      <div className="sling-aurora sling-aurora-1" style={{ top: '-40px', left: '-70px', width: '250px', height: '250px', background: '#60a5fa' }} />
+      <div className="sling-aurora sling-aurora-2" style={{ bottom: '-50px', right: '-70px', width: '230px', height: '230px', background: '#22d3ee' }} />
 
       {/* Theme toggle */}
       <button
@@ -74,7 +76,7 @@ const ForgotPasswordPage = () => {
         {isDark ? '☀️' : '🌙'}
       </button>
 
-      <div className={`w-full max-w-sm rounded-3xl shadow-xl p-8 animate-fade-in-up ${
+      <div className={`relative z-10 w-full max-w-sm rounded-3xl shadow-xl p-8 animate-fade-in-up ${
         isDark ? 'bg-slate-800' : 'bg-white'
       }`}>
 

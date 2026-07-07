@@ -11,6 +11,7 @@ import { useTheme } from '../context/ThemeContext';
 import { useCelebration } from '../context/CelebrationContext';
 import Navbar from '../components/Navbar';
 import ChatBox from '../components/ChatBox';
+import StatusTimeline from '../components/StatusTimeline';
 import { sendNotification } from '../utils/notify';
 
 const STATUS_COLORS = {
@@ -176,6 +177,8 @@ const RequestDetailPage = () => {
             {request.rewardType === 'party' ? '🎉 Party / Treat' : `₹${request.tipAmount / 100}`}
           </span>
         </div>
+
+        <StatusTimeline status={request.status} isDark={isDark} />
 
         <div className={`rounded-2xl shadow-sm p-4 mb-4 ${isDark ? 'bg-slate-800' : 'bg-white'}`}>
           <div className="flex items-center gap-2 mb-3 flex-wrap">

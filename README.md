@@ -142,19 +142,11 @@ The target is around five thousand students, and a few choices keep it comfortab
 
 When live chat traffic outgrows a single instance, the next step is a Redis adapter for Socket.io (Upstash has a free tier) so multiple instances share the same chat rooms.
 
-## How it came together, phase by phase
+## How it came together
 
-**Phase 1, the foundation.** Campus-gated sign-up with an email OTP, JWT login, and the ability to post and browse requests. The iitj.ac.in gate came first, because trust is the entire point of the app.
+The full build story, phase by phase from the first campus noticeboard to the animated mobile app, lives in its own document.
 
-**Phase 2, the delivery loop.** The status state machine, the accept flow, and the rules about who is allowed to move a request into which state. This is where it stopped being a noticeboard and started being a delivery app.
-
-**Phase 3, people and trust.** Real-time chat, two-way ratings, optional phone reveal, and profiles. Every request also carries an agreed tip that the runner and requester settle between themselves.
-
-**Phase 4, polish and reliability.** The rebrand from Campus Porter to SLING, the animated logo, and the subtle motion throughout. This phase also cleared a stack of real bugs: email that failed fast instead of hanging, no more orphaned accounts when signup half-completed, and API calls that stopped pointing at localhost. Connection pooling and indexing landed here too.
-
-**Phase 5, going properly live.** The backend moved off the exhausted Railway trial onto Render, email now sends through Brevo, the frontend on Vercel got a single-page-app rewrite so deep links and refreshes resolve, and the web app became installable as a PWA. Next in this phase is a native Android build with Capacitor.
-
-**Next up.** Redis-backed chat for horizontal scale, smarter runner matching based on where people already are, rate limiting to keep things tidy, and push notifications on mobile.
+**Read it here: [docs/DEVELOPMENT_PHASES.md](docs/DEVELOPMENT_PHASES.md)**
 
 ## Engineering report
 

@@ -277,12 +277,20 @@ body {
 .sling-confetti:nth-child(4n+2) { background: #f59e0b; }
 .sling-confetti:nth-child(4n+3) { background: #ec4899; }
 
+/* Status timeline */
+.sling-timeline-fill { transition: width 0.6s cubic-bezier(0.22,1,0.36,1); }
+.animate-glow { animation: slingGlow 2s ease-in-out infinite; }
+@keyframes slingGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(37,99,235,0.5); }
+  50% { box-shadow: 0 0 0 8px rgba(37,99,235,0); }
+}
+
 /* Respect users who prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .sling-badge, .sling-parcel, .sling-speedlines line, .sling-wordmark,
   .animate-fade-in-up, .animate-pop-in, .sling-blob, .skeleton,
   .sling-gradient-text, .sling-aurora, .sling-cta, .sling-cta::after,
-  .animate-rise, .animate-wiggle, .sling-confetti,
+  .animate-rise, .animate-wiggle, .animate-glow, .sling-confetti,
   .sling-burst-logo, .sling-burst-glow, .sling-burst-overlay, .sling-burst-title, .sling-burst-subtitle {
     animation: none !important;
   }
